@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'algo.dart';
 
 void main() => runApp(LocationApp());
 
@@ -24,22 +25,21 @@ class LocationApp extends StatelessWidget {
 class DataLoader {
   List<Object> data;
 
-   DataLoader() {
-    }
+  DataLoader() {}
 
   Future<List<Object>> loadData() async {
-    var dataString = await rootBundle.loadString('lib/data/coordinates_100.json');
+    var dataString =
+        await rootBundle.loadString('lib/data/coordinates_100.json');
     var jsonData = await json.decode(dataString);
     return jsonData;
   }
 }
 
-
 class LocationPage extends StatefulWidget {
   LocationPage({Key key, this.title}) : super(key: key);
 
   final String title;
-  
+
   @override
   _LocationState createState() => _LocationState();
 }
@@ -49,22 +49,23 @@ class _LocationState extends State<LocationPage> {
   var stringData = '';
 
   void _handlePress() {
-
     setState(() {
-      _closestPeople = []; 
+      _closestPeople = [];
     });
   }
 
-  
-
-  Future<Position> _loadDataRunAlgo() async{
+  Future<Position> _loadDataRunAlgo() async {
     var jsonData = await DataLoader().loadData();
-    print (jsonData);
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
+    //print (jsonData);
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    List<Object> closestCoords = getCoordsInRadius(jsonData, position, 10);
+    print("The closest coordinates!!!");
+    print(closestCoords);
+    //print(position);
     return position;
   }
-  
+
   //mock datafile
   //read from file
 
